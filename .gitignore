@@ -1,3 +1,5 @@
+config/env.js
 node_modules/
 dist/
 /npm-debug.log
+PagesIndex.json

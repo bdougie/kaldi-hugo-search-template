@@ -12,6 +12,29 @@ import svgmin from "gulp-svgmin";
 import inject from "gulp-inject";
 import replace from "gulp-replace";
 import cssnano from "cssnano";
+import algoliasearch from "algoliasearch";
+import {attempt, isError} from "lodash";
+import fs from "fs";
+import reduce from "gulp-reduce-async";
+import rename from "gulp-rename";
+import S from "string";
+import runSequence from "run-sequence";
+
+const development = process.env.ALGOLIA_ID === undefined;
+let algoliaIndex;
+let env;
+
+if (development) {
+  env = attempt(() => require("./config/env.js"));
+  env = isError(env) ? null : env.default;
+}
+
+if (!development || env) {
+  const ALGOLIA_ID = !development ? process.env.ALGOLIA_ID : env && env.ALGOLIA_ID;
+  const ALGOLIA_ADMIN_ID = !development ? process.env.ALGOLIA_ADMIN_ID : env && env.ALGOLIA_ADMIN_ID;
+  const algolia = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_ID);
+  algoliaIndex = algolia.initIndex("kaldi");
+}
 
 const browserSync = BrowserSync.create();
 const hugoBin = `./bin/hugo.${process.platform === "win32" ? "exe" : process.platform}`;
@@ -32,10 +55,14 @@ gulp.task("cms", () => {
     .pipe(browserSync.stream());
   gulp.src(["./node_modules/netlify-cms/dist/*.*", "!./node_modules/netlify-cms/dist/*.html"])
     .pipe(gulp.dest("./dist"))
-    .pipe(browserSync.stream())
+    .pipe(browserSync.stream());
 });
 
-gulp.task("build", ["css", "js", "hugo", "cms"]);
+// gulp.task("build", ["css", "js", "hugo", "cms", "send-index-to-algolia"]);
+gulp.task("build", function(callback) {
+  runSequence(["css", "js", "hugo", "cms"], "send-index-to-algolia");
+});
+
 gulp.task("build-preview", ["css", "js", "hugo-preview"]);
 
 gulp.task("css", () => (
@@ -44,6 +71,7 @@ gulp.task("css", () => (
       cssImport({from: "./src/css/main.css"}),
       cssnext(),
       cssnano(),
+
     ]))
     .pipe(gulp.dest("./dist/css"))
     .pipe(browserSync.stream())
@@ -90,6 +118,66 @@ gulp.task("server", ["hugo", "css", "js", "svg", "cms"], () => {
   gulp.watch("./src/cms/*", ["cms"]);
   gulp.watch("./site/static/img/icons/*.svg", ["svg"]);
   gulp.watch("./site/**/*", ["hugo"]);
+});
+
+gulp.task("send-index-to-algolia", ["index-site"], function() {
+  const index = JSON.parse(fs.readFileSync("./PagesIndex.json", "utf8"));
+  return algoliaIndex.addObjects(index);
+});
+
+gulp.task("index-site", (cb) => {
+  var pagesIndex = [];
+
+  return gulp.src("dist/**/*.html")
+    .pipe(reduce(function(memo, content, file, cb) {
+
+      var section      = S(file.path).chompLeft(file.cwd + "/dist").between("/", "/").s,
+        title        = S(content).between("<title>", "</title").collapseWhitespace().chompRight(" | Kaldi").s,
+        pageContent  = S(content).stripTags().collapseWhitespace().s,
+        href         = S(file.path).chompLeft(file.cwd + "/dist").s,
+        pageInfo     = new Object(),
+        isRestricted = false,
+        blacklist    = [
+          "/page/",
+          "/tags/",
+          "/pages/index.html",
+          "/thanks",
+          "404"
+        ];
+
+      // fixes homepage title
+      if (href === "/index.html") {
+        title = "Homepage";
+      }
+
+      // remove trailing 'index.html' from qualified paths
+      if (href.indexOf("/index.html") !== -1) {
+        href = S(href).strip("index.html").s;
+      }
+
+      // determine if this file is restricted
+      for (const ignoredString of blacklist) {
+        if (href.indexOf(ignoredString) !== -1) {
+          isRestricted = true;
+          break;
+        }
+      }
+
+      // only push files that aren't ignored
+      if (!isRestricted) {
+        pageInfo["objectID"] = href;
+        pageInfo["section"] = section;
+        pageInfo["title"]   = title;
+        pageInfo["href"]    = href;
+        pageInfo["content"] = pageContent;
+
+        pagesIndex.push(pageInfo);
+      }
+
+      cb(null, JSON.stringify(pagesIndex));
+    }, "{}"))
+    .pipe(rename("PagesIndex.json"))
+    .pipe(gulp.dest("./"));
 });
 
 function buildSite(cb, options) {
