@@ -72,6 +72,7 @@
 @import './imports/_buttons';
 @import './imports/_svg';
 @import './imports/_cms';
+@import './imports/_search';
 
 /* Variables */
 /* Importing here will allow you to override any variables in the modules */
@@ -85,3 +86,15 @@
 
 /* Uncomment out the line below to help debug layout issues */
 /*@import './imports/_debug';*/
+
+body {
+	.search-overlay .container {
+		padding-left: $small;
+		padding-right: $small;
+
+		@media screen and (min-width: $display) {
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
+}

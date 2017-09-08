@@ -47,6 +47,8 @@
     "postcss-cssnext": "^2.7.0",
     "postcss-import": "^8.1.2",
     "postcss-loader": "^0.9.1",
+    "postcss-nested": "1.0.0",
+    "postcss-simple-vars-async": "1.2.1",
     "postcss-uncss": "^0.14.0",
     "run-sequence": "2.1.0",
     "string": "3.3.3",
