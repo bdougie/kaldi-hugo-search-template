@@ -2,6 +2,16 @@
 
 This is a small business template built with [Victor Hugo](https://github.com/netlify/victor-hugo) and [Netlify CMS](https://github.com/netlify/netlify-cms), designed and developed by [Darin Dimitroff](http://www.darindimitroff.com/), [spacefarm.digital](https://www.spacefarm.digital).
 
+## Algolia Search Setup
+If you are cloning this template to run locally, you will need
+to add your Algolia IDs to a new [config/env.js](https://github.com/bdougie/kaldi-hugo-search-template/blob/6a5230f9b81e1f876bc41973678b0691f61ab8d1/config/env.example.js) file. You can copy the
+what is in the [env.example.js](https://github.com/bdougie/kaldi-hugo-search-template/blob/6a5230f9b81e1f876bc41973678b0691f61ab8d1/config/env.example.js).
+
+Be sure to change you Algolia Application ID and Search-Only API Key in the [liveSearch.js](https://github.com/bdougie/kaldi-hugo-search-template/blob/master/site/static/js/liveSearch.js#L1-L3) as
+well.
+
+If you are deploying this to Netlify, you can use the [Deploy to Netlify](https://app.netlify.com/start/deploy?repository=https://github.com/bdougie/kaldi-hugo-search-template) below and add your Algolia IDs as ENV variables.
+
 ## Getting started
 
 Use our deploy button to get your own copy of the repository:

@@ -1,3 +1,5 @@
+// The first key the Application ID, the second is the Search-Only Key
+// Both are safe to be in source control ;)
 const algolia = algoliasearch("3TZ23PBKWA", "066dd636f08bd2fb78fcb120b38f7ddd");
 const algoliaIndex = algolia.initIndex("kaldi");
 
@@ -15,7 +17,6 @@ if (urlParam >= 0) {
   $('.search-icon').addClass('active');
   $('#search-overlay').addClass('active');
 }
-
 
 // adds listener on the input field
 function initUI() {

@@ -4,3 +4,7 @@
 
 [context.deploy-preview]
   command = "npm run build-preview"
+
+[template.environment]
+  ALGOLIA_ADMIN_ID= "Enter you Algolia Admin API Key"
+  STATUSKIT_RESOURCES_LINK = "Enter you Algolia Application ID"

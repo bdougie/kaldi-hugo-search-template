@@ -59,7 +59,6 @@ gulp.task("cms", () => {
     .pipe(browserSync.stream());
 });
 
-// gulp.task("build", ["css", "js", "hugo", "cms", "send-index-to-algolia"]);
 gulp.task("build", function(callback) {
   runSequence(["css", "js", "hugo", "cms"], "send-index-to-algolia");
 });
