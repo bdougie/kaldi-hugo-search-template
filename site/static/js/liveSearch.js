@@ -3,6 +3,15 @@
 const algolia = algoliasearch("3TZ23PBKWA", "066dd636f08bd2fb78fcb120b38f7ddd");
 const algoliaIndex = algolia.initIndex("kaldi");
 
+
+algoliaIndex.setSettings({
+  removeWordsIfNoResults: 'none',
+  attributesToSnippet: [
+    'content:6',
+    'title'
+  ]
+});
+
 var $results
 var downcount = 0;
 var selectedSearchLink = '#';
@@ -110,7 +119,10 @@ function renderResults(results, query, downSelected, clearSelected) {
     }
     pages.slice(0, 7).forEach(function(result) {
       var $result = $("<li>");
-      $result.append(createLink(result));
+      $result.append($("<a>", {
+        href: result.href,
+        text: decodeHtml(result.title)
+      }));
       $('.pages-results').append($result);
     });
 
@@ -143,10 +155,14 @@ function renderResults(results, query, downSelected, clearSelected) {
       }
     }
 
-   function createLink(html) {
-     console.log(html)
+    function decodeHtml(html) {
+      var txt = document.createElement("textarea");
+      txt.innerHTML = html;
+      return txt.value;
+    }
+    function createLink(html) {
       var a = document.createElement("a");
-      a.innerHTML = html._highlightResult.title.value;
+      a.innerHTML = html._highlightResult.content.value;
       a.href = html.href;
       return a;
     }
