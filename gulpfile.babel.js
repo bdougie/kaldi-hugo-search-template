@@ -147,6 +147,11 @@ gulp.task("index-site", (cb) => {
           "404"
         ];
 
+      // Skips post index page
+      if (title === "Posts") {
+        isRestricted = true;
+      }
+
       // fixes homepage title
       if (href === "/index.html") {
         title = "Homepage";

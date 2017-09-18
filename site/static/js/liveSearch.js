@@ -110,10 +110,7 @@ function renderResults(results, query, downSelected, clearSelected) {
     }
     pages.slice(0, 7).forEach(function(result) {
       var $result = $("<li>");
-      $result.append($("<a>", {
-        href: result.href,
-        text: decodeHtml(result.title)
-      }));
+      $result.append(createLink(result));
       $('.pages-results').append($result);
     });
 
@@ -122,10 +119,7 @@ function renderResults(results, query, downSelected, clearSelected) {
     }
     blog.slice(0, 7).forEach(function(result) {
       var $result = $("<li>");
-      $result.append($("<a>", {
-        href: result.href,
-        text: decodeHtml(result.title)
-      }));
+      $result.append(createLink(result));
       $('.blog-results').append($result);
     });
 
@@ -149,10 +143,12 @@ function renderResults(results, query, downSelected, clearSelected) {
       }
     }
 
-    function decodeHtml(html) {
-      var txt = document.createElement("textarea");
-      txt.innerHTML = html;
-      return txt.value;
+   function createLink(html) {
+     console.log(html)
+      var a = document.createElement("a");
+      a.innerHTML = html._highlightResult.title.value;
+      a.href = html.href;
+      return a;
     }
   }
 }

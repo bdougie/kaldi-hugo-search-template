@@ -234,7 +234,11 @@
   margin-right: 40px;
 }
 
-.search-results {
+.search-results { 
+  em {
+    color: black;
+    background-color: #f40;
+  }
   display: flex;
   align-content: space-between;
 	text-align: left;
