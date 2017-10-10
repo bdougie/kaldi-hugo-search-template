@@ -7,6 +7,7 @@ const algoliaIndex = algolia.initIndex("kaldi");
 algoliaIndex.setSettings({
   removeWordsIfNoResults: 'none',
   highlightPreTag: '<em class="search-highlight">',
+  snippetEllipsisText: '…',
   attributesToHighlight: [
     'title',
     'content'
@@ -163,7 +164,7 @@ function renderResults(results, query, downSelected, clearSelected) {
     }
     function createLink(html) {
       var a = document.createElement("a");
-      a.innerHTML = html._highlightResult.title.value;
+      a.innerHTML = html._snippetResult.content.value;
       a.href = html.href;
       return a;
     }

@@ -144,6 +144,7 @@ gulp.task("index-site", (cb) => {
           "/tags/",
           "/pages/index.html",
           "/thanks",
+          "/",
           "404"
         ];
 

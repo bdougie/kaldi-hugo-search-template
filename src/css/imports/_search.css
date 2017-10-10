@@ -273,7 +273,6 @@
 	}
 
 	a:not(.text-link) {
-		text-transform: capitalize;
 		color: #313D3E;
 		font-weight: 300;
 		font-size: 18px;
