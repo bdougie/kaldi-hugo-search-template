@@ -6,9 +6,10 @@ const algoliaIndex = algolia.initIndex("kaldi");
 
 algoliaIndex.setSettings({
   removeWordsIfNoResults: 'none',
-  attributesToSnippet: [
-    'content:6',
-    'title'
+  highlightPreTag: '<em class="search-highlight">',
+  attributesToHighlight: [
+    'title',
+    'content'
   ]
 });
 
@@ -162,7 +163,7 @@ function renderResults(results, query, downSelected, clearSelected) {
     }
     function createLink(html) {
       var a = document.createElement("a");
-      a.innerHTML = html._highlightResult.content.value;
+      a.innerHTML = html._highlightResult.title.value;
       a.href = html.href;
       return a;
     }
